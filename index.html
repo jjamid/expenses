@@ -358,7 +358,7 @@ button.ghost:hover{background:var(--field)}
   }
   async function loadList(){
     setStatus("Loading\u2026");
-    var res = await sb.from("expense_lists").select("items").maybeSingle();
+    var res = await sb.from("expense_lists").select("items").eq("user_id", session.user.id).maybeSingle();
     if(res.error){ setStatus("Couldn\u2019t load: " + res.error.message); return; }
     items = (res.data && Array.isArray(res.data.items)) ? clean(res.data.items) : [];
     renderRows(); renderSummary(); setStatus("Saved");
@@ -394,8 +394,7 @@ button.ghost:hover{background:var(--field)}
   document.getElementById("signUpBtn").addEventListener("click", async function(){
     if(!sb) return;
     authMsg("Creating account\u2026");
-    var c = creds();
-    var r = await sb.auth.signUp({email: c.email, password: c.password, options: {emailRedirectTo: window.location.origin + window.location.pathname}});
+    var r = await sb.auth.signUp(creds());
     if(r.error){ authMsg(r.error.message); return; }
     authMsg(r.data.session ? "" : "Check your email to confirm your account, then sign in.");
   });
