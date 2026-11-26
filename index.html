@@ -358,10 +358,9 @@ button.ghost:hover{background:var(--field)}
   }
   async function loadList(){
     setStatus("Loading\u2026");
-    var res = await sb.from("expense_lists").select("items").maybeSingle();
+    var res = await sb.from("expense_lists").select("items");
     if(res.error){ setStatus("Couldn\u2019t load: " + res.error.message); return; }
     items = (res.data && Array.isArray(res.data.items)) ? clean(res.data.items) : [];
-    Items = [];. //temp
     renderRows(); renderSummary(); setStatus("Saved");
   }
   function showSignedIn(on){ authEl.hidden = on; appEl.hidden = !on; }
