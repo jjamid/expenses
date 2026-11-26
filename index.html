@@ -358,7 +358,7 @@ button.ghost:hover{background:var(--field)}
   }
   async function loadList(){
     setStatus("Loading\u2026");
-    var res = await sb.from("expense_lists").select("items").eq("user_id", session.user.id).maybeSingle();
+    var res = await sb.from("expense_lists").select("items").maybeSingle();
     if(res.error){ setStatus("Couldn\u2019t load: " + res.error.message); return; }
     items = (res.data && Array.isArray(res.data.items)) ? clean(res.data.items) : [];
     renderRows(); renderSummary(); setStatus("Saved");
