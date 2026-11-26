@@ -394,7 +394,8 @@ button.ghost:hover{background:var(--field)}
   document.getElementById("signUpBtn").addEventListener("click", async function(){
     if(!sb) return;
     authMsg("Creating account\u2026");
-    var r = await sb.auth.signUp(creds());
+    var c = creds();
+    var r = await sb.auth.signUp({email: c.email, password: c.password, options: {emailRedirectTo: window.location.origin + window.location.pathname}});
     if(r.error){ authMsg(r.error.message); return; }
     authMsg(r.data.session ? "" : "Check your email to confirm your account, then sign in.");
   });
