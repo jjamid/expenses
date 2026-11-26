@@ -356,24 +356,33 @@ button.ghost:hover{background:var(--field)}
     if(JSON.stringify(items) === snapStr){ dirty = false; setStatus("Saved"); }
     else { scheduleDb(); }
   }
-  async function loadList(){
-    setStatus("Loading\u2026");
-var res = await sb.from("expense_lists").select("items");
-if (res.error) {
-  setStatus("Couldn\u2019t load: " + res.error.message);
-  return;
-}
 
-var rows = Array.isArray(res.data) ? res.data : [];
-var merged = rows.flatMap(function (row) {
-  return row && Array.isArray(row.items) ? row.items : [];
-});
+  async function loadList() {
+  setStatus("Loading\u2026");
 
-items = clean(merged);
-renderRows();
-renderSummary();
-setStatus("Loaded");
+  var res = await sb.from("expense_lists").select("items");
+  if (res.error) {
+    console.error("Supabase select error:", res.error);
+    setStatus("Couldn\u2019t load: " + res.error.message);
+    return;
   }
+
+  try {
+    var rows = Array.isArray(res.data) ? res.data : [];
+    var merged = rows.flatMap(function (row) {
+      return row && Array.isArray(row.items) ? row.items : [];
+    });
+
+    items = clean(merged);
+    renderRows();
+    renderSummary();
+    setStatus("Loaded");
+  } catch (err) {
+    console.error("loadList post-processing error:", err);
+    setStatus("Couldn\u2019t load: " + (err && err.message ? err.message : String(err)));
+  }
+}
+  
   function showSignedIn(on){ authEl.hidden = on; appEl.hidden = !on; }
 
   function startAuth(){
